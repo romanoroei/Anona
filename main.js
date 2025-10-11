@@ -581,86 +581,107 @@ class AnnuityApp {
     }
 
     // יצירת גרף הרכב הון
-    createCapitalCompositionChart(results) {
-        const ctx = document.getElementById('compositionChart');
-        if (!ctx) return;
+    
 
-        // חישוב פילוח ההשקעה
-        // סה"כ קרן ששולמה למשיכות (ללא מסים)
-        const netWithdrawn = results.summary.totalWithdrawn - results.summary.totalTax;
-        
-        // פילוח המשיכות נטו לקרן ותשואה
-        const principalWithdrawn = Math.min(netWithdrawn, results.summary.initialAmount);
-        const returnWithdrawn = Math.max(0, netWithdrawn - principalWithdrawn);
-        
-        // מסים ששולמו
-        const taxPaid = results.summary.totalTax;
-        
-        // יתרה נותרת
-        const remainingBalance = results.summary.finalBalance;
-        
-        // קרן שלא נמשכה (עדיין בתיק)
-        const principalRemaining = Math.max(0, results.summary.initialAmount - principalWithdrawn);
-
-        // מחיקת גרף קיים
-        if (window.compositionChartInstance) {
-            window.compositionChartInstance.destroy();
+createCapitalCompositionChart(results) {
+        // We now REMOVE the chart completely and show only the numeric breakdown.
+        const canvas = document.getElementById('compositionChart');
+        if (canvas) {
+            // Hide the canvas element
+            canvas.style.display = 'none';
         }
 
-        // בדיקה אם יש תשואה שנמשכה
-        const hasReturnWithdrawn = returnWithdrawn > 1000; // סף מינימלי
-        
-        let chartData, chartLabels, chartColors;
-        
-        if (hasReturnWithdrawn) {
-            // אם יש תשואה שנמשכה - הצג את כל הרכיבים
-            chartData = [principalWithdrawn, returnWithdrawn, taxPaid, principalRemaining];
-            chartLabels = ['קרן שנמשכה', 'תשואה שנמשכה', 'מסים ששולמו', 'יתרה נותרת'];
-            chartColors = ['#EF4444', '#10B981', '#F59E0B', '#3B82F6'];
-        } else {
-            // אם רק קרן נמשכה - פילוח פשוט יותר
-            chartData = [principalWithdrawn, taxPaid, remainingBalance];
-            chartLabels = ['קרן שנמשכה', 'מסים ששולמו', 'יתרה נותרת'];
-            chartColors = ['#EF4444', '#F59E0B', '#3B82F6'];
+        // Guard
+        if (!results || !Array.isArray(results.monthlyData) || !results.summary) return;
+
+        const monthly = results.monthlyData;
+        const initialAmount = results.summary.initialAmount || 0;
+
+        // === Display-oriented decomposition ===
+        // principalRemainingDisplay never increases, so summed principal cannot exceed initialAmount.
+        let principalRemainingDisplay = initialAmount;
+        let sumPrincipal = 0;
+        let sumReturnNet = 0;
+        let sumTax = 0;
+        let sumFees = 0;
+
+        for (const r of monthly) {
+            const balanceAfterFee = r.balanceAfterFee ?? 0;
+            const actualWithdrawal = r.actualWithdrawal ?? 0;   // before tax
+            const netWithdrawal = r.netWithdrawal ?? 0;         // after tax
+            const tax = r.tax ?? 0;
+            const fee = r.managementFee ?? 0;
+
+            // "Economic" gain ratio for display: relative to remaining ORIGINAL principal, not inflation-adjusted basis.
+            const econGainRatio = balanceAfterFee > 0
+                ? Math.max(0, (balanceAfterFee - principalRemainingDisplay)) / balanceAfterFee
+                : 0;
+
+            // Portion of the withdrawal attributed to principal for display (pre-tax), but never more than what remains of principal
+            let principalPart = actualWithdrawal * (1 - econGainRatio);
+            if (principalPart > principalRemainingDisplay) principalPart = principalRemainingDisplay;
+            if (principalPart < 0) principalPart = 0;
+
+            // Net return to the client this month = netWithdrawal - principalPart (never negative for display)
+            let returnNetPart = netWithdrawal - principalPart;
+            if (returnNetPart < 0) returnNetPart = 0;
+
+            sumPrincipal += principalPart;
+            principalRemainingDisplay -= principalPart;
+            sumReturnNet += returnNetPart;
+            sumTax += tax;
+            sumFees += fee;
         }
 
-        window.compositionChartInstance = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    data: chartData,
-                    backgroundColor: chartColors,
-                    borderWidth: 2,
-                    borderColor: '#ffffff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: { size: 12 },
-                            padding: 15
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const value = window.annuityCalculator.formatNumber(context.parsed);
-                                // חישוב אחוז מתוך הסכום הכולל
-                                const total = chartData.reduce((sum, val) => sum + val, 0);
-                                const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                return `${context.label}: ${value} ₪ (${percentage}%)`;
-                            }
-                        }
-                    }
+        const remainingBalance = results.summary.finalBalance ?? (monthly.length ? monthly[monthly.length-1].endBalance : 0);
+
+        // Round for neatness
+        const round2 = (x) => Math.round((x + Number.EPSILON) * 100) / 100;
+        const chartData   = [round2(sumPrincipal), round2(sumReturnNet), round2(sumTax), round2(sumFees), round2(remainingBalance)];
+        const chartLabels = ['קרן שנמשכה', 'תשואה שנמשכה', 'מסים ששולמו', 'דמי ניהול', 'יתרה נותרת'];
+        const chartColors = ['#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#3B82F6'];
+
+        // === Build / update numbers panel only ===
+        try {
+            let panel = document.getElementById('compositionNumbers');
+            // If the canvas existed, insert after it; otherwise, append inside its wrapper
+            const wrapper = canvas ? canvas.parentElement : document.querySelector('.chart-wrapper');
+            if (!panel && wrapper) {
+                panel = document.createElement('div');
+                panel.id = 'compositionNumbers';
+                panel.className = 'composition-numbers no-chart';
+                if (canvas) {
+                    canvas.insertAdjacentElement('afterend', panel);
+                } else {
+                    wrapper.appendChild(panel);
                 }
             }
-        });
+            if (panel) {
+                const fmt = (val) => window.annuityCalculator ? window.annuityCalculator.formatNumber(val) : (val||0).toLocaleString('he-IL');
+                const totalForPct = chartData.reduce((s, v) => s + v, 0) || 1;
+                let html = '<div class="numbers-title">פירוט מספרי</div><ul class="numbers-list">';
+                chartLabels.forEach((label, idx) => {
+                    const val = chartData[idx] || 0;
+                    const pct = ((val / totalForPct) * 100).toFixed(1);
+                    const color = chartColors[idx];
+                    html += `
+                        <li class="numbers-item" aria-label="${label} ${fmt(val)} ₪ (${pct}%)">
+                            <div class="label-wrap">
+                                <span class="swatch" style="background:${color};"></span>
+                                <span class="n-label">${label}</span>
+                            </div>
+                            <div class="stat-wrap">
+                                <span class="n-value ltr">₪ ${fmt(val)}</span>
+                                <span class="n-pct badge">${pct}%</span>
+                            </div>
+                        </li>`;
+                });
+                html += '</ul>';
+                panel.innerHTML = html;
+            }
+        } catch (e) { /* ignore */ }
     }
+
 
     // עדכון השפעת אינפלציה
     updateInflationImpact(results) {
