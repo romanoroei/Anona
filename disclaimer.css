@@ -1,0 +1,165 @@
+/* Disclaimer Footer Styles */
+.disclaimer-footer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-top: 3px solid var(--primary-blue);
+    margin-top: 50px;
+    padding: 30px 20px;
+    text-align: right;
+    direction: rtl;
+}
+
+.disclaimer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.disclaimer-content h3 {
+    color: var(--primary-blue);
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+.disclaimer-content p {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+.license-info {
+    background: rgba(30, 58, 138, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    border-right: 4px solid var(--primary-blue);
+    font-weight: 500;
+    color: var(--primary-blue) !important;
+}
+
+/* Contact Section Styles */
+.contact-section {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+    color: var(--white);
+    padding: 40px 20px;
+    margin: 40px 0;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+}
+
+.contact-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: var(--light-gold);
+}
+
+.contact-section p {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    opacity: 0.9;
+}
+
+.contact-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: var(--gold);
+    color: var(--primary-blue);
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid var(--gold);
+}
+
+.contact-btn:hover {
+    background: transparent;
+    color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+}
+
+.contact-btn.whatsapp {
+    background: #25d366;
+    border-color: #25d366;
+    color: white;
+}
+
+.contact-btn.whatsapp:hover {
+    background: transparent;
+    color: #25d366;
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+}
+
+.contact-btn.email {
+    background: #ea4335;
+    border-color: #ea4335;
+    color: white;
+}
+
+.contact-btn.email:hover {
+    background: transparent;
+    color: #ea4335;
+    box-shadow: 0 5px 15px rgba(234, 67, 53, 0.3);
+}
+
+.contact-btn.calendar {
+    background: #4285f4;
+    border-color: #4285f4;
+    color: white;
+}
+
+.contact-btn.calendar:hover {
+    background: transparent;
+    color: #4285f4;
+    box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3);
+}
+
+@media (max-width: 768px) {
+    .disclaimer-footer {
+        padding: 20px 15px;
+    }
+    
+    .disclaimer-content h3 {
+        font-size: 1.2rem;
+    }
+    
+    .disclaimer-content p {
+        font-size: 0.9rem;
+    }
+    
+    .contact-section {
+        padding: 30px 15px;
+        margin: 30px 0;
+    }
+    
+    .contact-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    .contact-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .contact-btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}

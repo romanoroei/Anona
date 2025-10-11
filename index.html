@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון אנונה מקצועי</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./disclaimer.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Status Message -->
+        <div id="status-message" class="status-message" style="display: none;"></div>
+        
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">מחשבון אנונה מקצועי</h1>
+            <p class="subtitle">צור לעצמך הכנסה שוטפת קבועה מתכנית השקעה </p>
+            <div class="developer-credit">
+                <p class="developer-text">מחשבון מקצועי עם אפשרויות מתקדמות - פותח על ידי רועי רומנו - מתכנן פיננסי</p>
+            </div>
+        </header>
+
+        <!-- Input Form -->
+        <section class="input-section">
+            <h2>הזן נתוני השקעה</h2>
+            
+            <div class="form-grid">
+                <!-- Basic Parameters -->
+                <div class="input-group">
+                    <label for="initialAmount">השקעה התחלתית (₪)</label>
+                    <input type="text" id="initialAmount" value="1,000,000" class="number-input rtl-align">
+                    <span class="range-info">סכום ההשקעה הראשוני</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="annualReturn">צפי תשואה שנתית (%)</label>
+                    <input type="number" id="annualReturn" value="6" step="0.1" min="0" max="20">
+                    <span class="range-info">הנחת תשואה שנתית ממוצעת בתכנית</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="withdrawalAmount">סכום משיכה חודשי מבוקש (₪)</label>
+                    <input type="text" id="withdrawalAmount" value="6,000" class="number-input">
+                    <span class="range-info">הסכום הרצוי למשיכה חודשית מהתכנית </span>
+                </div>
+            </div>
+
+            <!-- Advanced Options Toggle -->
+            <div class="advanced-toggle">
+                <button type="button" id="advancedToggle" class="toggle-btn">
+                    <span>אפשרויות מקצועיות לשינוי </span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+            </div>
+
+            <!-- Advanced Options Panel -->
+            <div id="advancedOptions" class="advanced-options">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="annualFee">הזן דמי ניהול שנתיים (%)</label>
+                        <input type="number" id="annualFee" value="0.85" step="0.01" min="0" max="5">
+                        <span class="range-info">מה דמי הניהול שלך בתכנית</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="taxType">סוג מס</label>
+                        <select id="taxType">
+                            <option value="real" selected>מס ריאלי (25%)</option>
+                            <option value="nominal">מס נומינלי (15%)</option>
+                        </select>
+                        <span class="range-info">בחירת שיטת המיסוי הקיימת בתכנית שלך</span>
+                    </div>
+
+                    <div class="input-group" id="inflationGroup">
+                        <label for="annualInflation">אינפלציה שנתית משוערת (%)</label>
+                        <input type="number" id="annualInflation" value="3" step="0.1" min="0" max="10">
+                        <span class="range-info">רלוונטי רק למס ריאלי</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="withdrawalMethod">שיטת משיכה מועדפת</label>
+                        <select id="withdrawalMethod">
+                            <option value="gross" selected>ברוטו (לפני מס)</option>
+                            <option value="net">נטו (אחרי מס)</option>
+                        </select>
+                        <span class="range-info">האם הסכום שהזנת הוא לפני או אחרי מס</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="monthsToDisplay">מספר חודשי משיכה</label>
+                        <input type="text" id="monthsToDisplay" value="מקסימום חודשים" class="number-input">
+                        <span class="range-info">הזן מספר חודשים או השאר "מקסימום חודשים" לכל התקופה</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculate Button -->
+            <div class="calculate-section">
+                <div class="button-group">
+                    <button type="button" id="calculateBtn" class="calculate-btn">
+                        חשב אנונה
+                    </button>
+                    <button type="button" id="clearBtn" class="clear-btn">
+                        נקה והתחל מחדש
+                    </button>
+                </div>
+                <div class="keyboard-shortcut">קיצור מקלדת: Ctrl + Enter | Escape לניקוי</div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="results-section" style="display: none;">
+            <h2>תוצאות החישוב</h2>
+            
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>השקעה התחלתית</h3>
+                    <div class="card-value" id="summaryInitial">-</div>
+                </div>
+                <div class="summary-card">
+                    <h3>משיכה חודשית ממוצעת</h3>
+                    <div class="card-value" id="summaryWithdrawal">-</div>
+                </div>
+                <div class="summary-card">
+                    <h3>מספר חודשי משיכה</h3>
+                    <div class="card-value" id="summaryActualMonths">-</div>
+                </div>
+                <div class="summary-card">
+                    <h3>מספר חודשים מקסימלי</h3>
+                    <div class="card-value" id="summaryMaxMonths">-</div>
+                </div>
+                <div class="summary-card">
+                    <h3>סה"כ נמשך כולל מס</h3>
+                    <div class="card-value" id="summaryTotalWithdrawn">-</div>
+                </div>
+                <div class="summary-card">
+                    <h3>יתרה סופית</h3>
+                    <div class="card-value" id="summaryFinalBalance">-</div>
+                </div>
+            </div>
+
+            <!-- Tax Information -->
+            <div class="tax-info-section">
+                <h3>מידע מיסוי</h3>
+                <div class="tax-cards">
+                    <div class="tax-card">
+                        <h4>סוג מס</h4>
+                        <div class="tax-value" id="taxTypeDisplay">-</div>
+                    </div>
+                    <div class="tax-card">
+                        <h4>סה"כ מס ששולם</h4>
+                        <div class="tax-value" id="totalTaxPaid">-</div>
+                    </div>
+                    <div class="tax-card">
+                        <h4>סה"כ נטו התקבל</h4>
+                        <div class="tax-value" id="totalNetReceived">-</div>
+                    </div>
+                    <div class="tax-card">
+                        <h4>אחוז מס ממוצע</h4>
+                        <div class="tax-value" id="averageTaxRate">-</div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(30, 58, 138, 0.05); border-radius: 8px; font-size: 0.85rem; color: #475569; text-align: center;">
+                    <strong>הסבר:</strong> אחוז המס הממוצע מחושב כיחס בין סך כל המסים ששולמו לסך כל הכנסות המס (משיכות + רווחים) לאורך כל תקופת האנונה
+                </div>
+            </div>
+        </section>
+
+        <!-- Table Section -->
+        <section class="table-section">
+            <h2>📋פירוט חודשי </h2>
+            
+            <!-- Table Display Options -->
+            <div class="table-options">
+                <div class="table-display-controls">
+                    <button type="button" id="showLimitedTableBtn" class="btn-table">
+                        הצג טבלה מוגבלת (<span id="limitedMonthsText">12</span> חודשים)
+                    </button>
+                    <button type="button" id="showFullTableBtn" class="btn-table">
+                        הצג טבלה מלאה (כל החודשים)
+                    </button>
+                    <button type="button" id="hideTableBtn" class="btn-table" style="display: none;">
+                        סגור טבלה
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Table -->
+            <!-- Calculation Assumptions (moved outside the table container) -->
+<div id="calculationAssumptions" class="calculation-assumptions">
+                    <!-- Assumptions will be inserted here by JavaScript -->
+                </div>
+                
+                <div id="tableContainer" class="table-container" style="display: none;">
+                <!-- Calculation Assumptions -->
+                <div id="calculationAssumptions" class="calculation-assumptions">
+                    <!-- Assumptions will be inserted here by JavaScript -->
+                </div>
+                
+                <table id="resultsTable" class="results-table">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th>חודש</th>
+                            <th>יתרה התחלתית</th>
+                            <th>רווח חודשי</th>
+                            <th>דמי ניהול</th>
+                            <th>יתרה לפני משיכה</th>
+                            <th>משיכה ברוטו</th>
+                            <th>מס</th>
+                            <th>משיכה נטו</th>
+                            <th>יתרה סופית</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Results will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Export Options Section -->
+            <div class="export-section">
+                <h3>📄 ייצוא ושיתוף דוחות</h3>
+                <div class="export-container">
+                    <div class="export-row">
+                        <button type="button" id="exportExcelBtn" class="export-btn excel">
+                            📊 ייצא לExcel
+                        </button>
+                        <button type="button" id="exportPdfBtn" class="export-btn pdf">
+                            📄 ייצא לPDF
+                        </button>
+                    </div>
+                    <div class="share-row">
+                        <button type="button" id="shareWhatsAppBtn" class="share-btn whatsapp">
+                            📱 שלח בווטסאפ
+                        </button>
+                        <button type="button" id="shareFacebookBtn" class="share-btn facebook">
+                            📘 שתף בפייסבוק
+                        </button>
+                        <button type="button" id="shareLinkedInBtn" class="share-btn linkedin">
+                            💼 שתף בלינקדאין
+                        </button>
+                        <button type="button" id="shareEmailBtn" class="share-btn email">
+                            📧 שלח במייל
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Section - Create Professional Annuity -->
+            <section class="contact-section">
+                <h2>רוצה לייצר אנונה מקצועית?</h2>
+                <p class="planner-intro">רועי רומנו - מתכנן פיננסי עם ניסיון של מעל 15 שנה</p>
+                <p>אני כאן לעזור לך לתכנן את העתיד הפיננסי שלך בצורה מקצועית ומותאמת אישית</p>
+                <div class="contact-buttons">
+                    <a href="https://wa.me/972528089808?text=שלום%20רועי,%20אני%20רוצה%20לייצר%20אנונה,%20אשמח%20שתיצור%20איתי%20קשר" class="contact-btn whatsapp" target="_blank">
+                        📱 שלח הודעה בווטסאפ
+                    </a>
+                    <a href="mailto:roeir@ar-fo.co.il?subject=בקשה לייצור אנונה&body=שלום רועי,%0A%0Aאני רוצה לייצר אנונה, אשמח שתיצור איתי קשר.%0A%0Aתודה!" class="contact-btn email" target="_blank">
+                        📧 שלח מייל
+                    </a>
+                    <a href="https://calendly.com/roeir-ar-fo/first-meeting" class="contact-btn calendar" target="_blank">
+                        📅 קבע פגישה ראשונה
+                    </a>
+                </div>
+            </section>
+
+            <!-- Financial Insights Section -->
+            <div class="insights-section">
+                <div class="insights-toggle">
+                    <button type="button" id="insightsToggle" class="toggle-btn">
+                        <span>קבל תובנות נוספות וניתוח כלכלי</span>
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                </div>
+
+                <div id="insightsPanel" class="insights-panel">
+                    <div class="insights-grid">
+                        <!-- Performance Metrics -->
+                        <div class="insight-card">
+                            <h4>📊 מדדי ביצועים</h4>
+                            <div class="metric-item">
+                                <span class="metric-label">תשואה שנתית נטו מסוכמת:</span>
+                                <span class="metric-value" id="netAnnualReturn">-</span>
+                            </div>
+                            <div style="margin: 8px 0; padding: 8px; background: rgba(30, 58, 138, 0.05); border-radius: 6px; font-size: 0.8rem; color: #64748b;">
+                                <strong>הבהרה:</strong> התשואה השנתית מחושבת כממוצע גיאומטרי של התשואות החודשיות נטו (אחרי ניכוי דמי ניהול ומסים) לאורך כל תקופת האנונה
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">אחוז השחתה של הקרן:</span>
+                                <span class="metric-value" id="principalDepletion">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">יעילות מיסוי:</span>
+                                <span class="metric-value" id="taxEfficiency">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Inflation Impact -->
+                        <div class="insight-card">
+                            <h4>📈 השפעת אינפלציה</h4>
+                            <div class="metric-item">
+                                <span class="metric-label">כוח קנייה בחודש האחרון:</span>
+                                <span class="metric-value" id="purchasingPower">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">עלות דמי ניהול כוללת:</span>
+                                <span class="metric-value" id="totalFeeCost">-</span>
+                            </div>
+                            <div class="metric-item inflation-detail">
+                                <div id="inflationImpact" class="inflation-analysis">
+                                    <!-- Inflation impact details -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Charts Container - רק גרף הרכב ההון -->
+                    <div class="charts-container">
+                        <div class="chart-wrapper">
+                            <h4>פילוח ההשקעה - לאן הלך הכסף?</h4>
+                            <canvas id="compositionChart" width="400" height="200"></canvas>
+                            <div class="chart-explanation">
+                                <strong>הסבר הגרף:</strong> הגרף מציג את חלוקת ההשקעה הראשונית והרווחים שהצטברו במהלך תקופת האנונה - 
+                                כמה נמשך כקרן, כמה כתשואה, כמה הלך למסים וכמה נשאר בתיק.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Professional Tools -->
+        <section class="tools-section">
+            <h2>כלים מקצועיים מתקדמים</h2>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3>💰 חישוב משיכה מקסימלית</h3>
+                    <p>מוצא את המשיכה האופטימלית לתקופות שונות</p>
+                    <button type="button" id="maxWithdrawalTool" class="tool-btn">חשב משיכה מקסימלית</button>
+                </div>
+
+                <div class="tool-card">
+                    <h3>⚠️ ניתוח השפעת פרמטרים</h3>
+                    <p>בוחן השפעת שינוי תשואה ודמי ניהול על התוצאות</p>
+                    <button type="button" id="sensitivityTool" class="tool-btn">בצע ניתוח רגישות</button>
+                </div>
+
+                <div class="tool-card">
+                    <h3>📊 השוואת מס ריאלי vs נומינלי</h3>
+                    <p>השוואה בין שתי שיטות המיסוי בתנאים שונים</p>
+                    <button type="button" id="taxComparisonTool" class="tool-btn">השווה שיטות מס</button>
+                </div>
+
+                <div class="tool-card">
+                    <h3>🎯 אופטימיזציה חכמה</h3>
+                    <p>המלצות לשיפור התוצאות והאסטרטגיה האופטימלית</p>
+                    <button type="button" id="optimizationTool" class="tool-btn">קבל המלצות</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section (Bottom) -->
+        <section class="contact-section">
+            <h2>מעוניין בתכנון פיננסי מקצועי?</h2>
+            
+            <!-- Professional Features -->
+            <div class="professional-features">
+                <div class="feature-item">
+                    <span class="feature-icon">🤝</span>
+                    <span class="feature-text">יחס וליווי אישי</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💼</span>
+                    <span class="feature-text">מומחיות פיננסית ופנסיונית</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">⭐</span>
+                    <span class="feature-text">אמינות ומקצועיות</span>
+                </div>
+            </div>
+            
+            <p>בוא נתכנן יחד את הדרך הטובה ביותר להשגת היעדים הפיננסיים שלך</p>
+            <div class="contact-buttons">
+                <a href="https://wa.me/972528089808?text=שלום%20רועי,%20אני%20רוצה%20לייצר%20אנונה,%20אשמח%20שתיצור%20איתי%20קשר" class="contact-btn whatsapp" target="_blank">
+                    📱 התחל שיחה בווטסאפ
+                </a>
+                <a href="mailto:roeir@ar-fo.co.il?subject=בקשה לתכנון פיננסי&body=שלום רועי,%0A%0Aאני רוצה לייצר אנונה, אשמח שתיצור איתי קשר.%0A%0Aתודה!" class="contact-btn email" target="_blank">
+                    📧 כתוב מייל
+                </a>
+                <a href="https://calendly.com/roeir-ar-fo/first-meeting" class="contact-btn calendar" target="_blank">
+                    📅 קבע פגישה
+                </a>
+            </div>
+        </section>
+
+        <!-- Tool Results Modal -->
+        <div id="toolModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <h2 id="modalTitle">תוצאות כלי</h2>
+                <div id="modalBody">
+                    <!-- Tool results will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>מחשב...</p>
+    </div>
+
+    <!-- Privacy Notice Banner -->
+    <div id="privacyBanner" class="privacy-banner">
+        <div class="privacy-content">
+            <div class="privacy-text">
+                <strong>הודעת פרטיות</strong><br>
+                האתר מאוחסן ב-GitHub Pages. איננו אוספים נתונים או מטמיעים עוגיות מעקב. ייתכן ש-GitHub משתמשים בעוגיות טכניות בלבד לצורכי אבטחה וביצועים.
+            </div>
+            <div class="privacy-buttons">
+                <button id="acceptPrivacy" class="privacy-btn accept">מבין</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disclaimer Footer -->
+    <footer class="disclaimer-footer">
+        <div class="disclaimer-content">
+            <h3>כתב ויתור וגילוי נאות</h3>
+            <p>
+                <strong>הודעה חשובה:</strong> המחשבון והניתוח המוצגים באתר זה הינם לצרכי מידע ואינפורמציה בלבד ואינם מהווים ייעוץ השקעות, ייעוץ פיננסי, ייעוץ מס או התחייבות לתוצאות או המלצה כלשהי. 
+                התוצאות מבוססות על הנחות תיאורטיות שמזין המשתמש ואינן מבטיחות ביצועים עתידיים. ייתכנו טעויות חישוביות, באחריות המשתמש לוודא את נכונות התוצאות. 
+                מומלץ להתייעץ עם בעל רישיון לפני קבלת החלטות השקעה.
+            </p>
+            <p class="license-info">
+                <strong>רועי רומנו</strong> - מתכנן פיננסי | רישיון סוכן פנסיוני: 117164
+            </p>
+            <p class="copyright-info">
+                <strong>זכויות יוצרים ושימוש מסחרי:</strong> המחשבון והכלים באתר זה פותחו בלעדית על ידי רועי רומנו ומוגנים בזכויות יוצרים. 
+                כל הזכויות שמורות. אסורים העתקה, הפצה או שימוש מסחרי ללא רישיון מפורש מראש ובכתב.
+            </p>
+            <p class="gender-note">
+                <strong>הערה חשובה:</strong> האתר פונה לכל המינים ונרשם בלשון זכר מטעמי נוחות בלבד.
+            </p>
+        </div>
+    </footer>
+
+    <script src="./calculator.js"></script>
+    <script src="./tools.js"></script>
+    <script src="./export.js"></script>
+    <script src="./main.js"></script>
+</body>
+</html>
