@@ -59,6 +59,15 @@ class AnnuityApp {
             hideTableBtn.addEventListener('click', () => this.hideTable());
         }
 
+        // הגנת סיסמה על כלים מקצועיים
+        const unlockToolsBtn = document.getElementById('unlockToolsBtn');
+        if (unlockToolsBtn) {
+            unlockToolsBtn.addEventListener('click', () => this.unlockProfessionalTools());
+        }
+
+        // בדיקה אם הכלים כבר נפתחו בעבר
+        this.checkToolsAccess();
+
         // תובנות פיננסיות
         this.setupInsightsToggle();
 
@@ -921,6 +930,39 @@ createCapitalCompositionChart(results) {
         this.updateTableButtons(null, null, true);
     }
 
+    // הגנת סיסמה על כלים מקצועיים
+    unlockProfessionalTools() {
+        const password = prompt('הכנס סיסמת לקוח:');
+        const correctPasswords = ['CLIENT2024', 'PREMIUM123', 'ADVANCED789'];
+        
+        if (correctPasswords.includes(password?.toUpperCase())) {
+            document.getElementById('clientAccessGate').style.display = 'none';
+            document.getElementById('toolsGrid').style.display = 'grid';
+            
+            // שמירה בזיכרון המקומי
+            localStorage.setItem('professionalToolsUnlocked', 'true');
+            localStorage.setItem('toolsUnlockTime', Date.now().toString());
+            
+            alert('✅ הכלים המקצועיים נפתחו בהצלחה!');
+        } else if (password !== null) { // אם המשתמש לא לחץ Cancel
+            alert('❌ סיסמה שגויה. אנא פנה למטפל שלך לקבלת הסיסמה.');
+        }
+    }
+
+    // בדיקת גישה לכלים
+    checkToolsAccess() {
+        const isUnlocked = localStorage.getItem('professionalToolsUnlocked');
+        const unlockTime = localStorage.getItem('toolsUnlockTime');
+        
+        // הכלים נעולים אוטומטית אחרי 7 ימים
+        const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+        
+        if (isUnlocked === 'true' && unlockTime && parseInt(unlockTime) > sevenDaysAgo) {
+            document.getElementById('clientAccessGate').style.display = 'none';
+            document.getElementById('toolsGrid').style.display = 'grid';
+        }
+    }
+
     // עדכון כפתורי הטבלה
     updateTableButtons(isLimited, monthsShown, isHidden = false) {
         const showLimitedBtn = document.getElementById('showLimitedTableBtn');
@@ -1120,7 +1162,7 @@ createCapitalCompositionChart(results) {
 💰 השקעה התחלתית: ${window.annuityCalculator.formatNumber(summary.initialAmount)} ₪
 📊 משיכה חודשית: ${window.annuityCalculator.formatNumber(summary.monthlyWithdrawal)} ₪
 ⏳ תקופת המשיכה: ${summary.actualMonths} חודשים
-💸 סה"כ נטו : ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
+💸 סה"כ נטו לקבלה: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
 🏦 יתרה סופית: ${window.annuityCalculator.formatNumber(summary.finalBalance)} ₪
 
 חושב על אנונה? בוא נתכנן יחד!
@@ -1158,7 +1200,7 @@ createCapitalCompositionChart(results) {
 💰 השקעה התחלתית: ${window.annuityCalculator.formatNumber(summary.initialAmount)} ₪
 📊 משיכה חודשית: ${window.annuityCalculator.formatNumber(summary.monthlyWithdrawal)} ₪
 ⏳ תקופת המשיכה: ${summary.actualMonths} חודשים (${(summary.actualMonths/12).toFixed(1)} שנים)
-💸 סה"כ נטו: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
+💸 סה"כ נטו לקבלה: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
 🏦 יתרה סופית: ${window.annuityCalculator.formatNumber(summary.finalBalance)} ₪
 
 החישוב בוצע באמצעות המחשבון המקצועי של רועי רומנו - מתכנן פיננסי (רישיון: 117164)
@@ -1377,7 +1419,8 @@ createCapitalCompositionChart(results) {
             if (results.isIndependentSimulation) {
                 html += `<div class="simulation-info">`;
                 html += `<p><strong>🎯 סוג הניתוח:</strong> סימולציה עצמאית לכל תרחיש</p>`;
-                html += `<p><em>כל תרחיש מדמה שינוי בפרמטרי הבסיס ומתחשב בהשפעה על מספר החודשים והתוצאות.</em></p>`;
+                html += `<p><em>כל תרחיש מדמה שינוי באמת בפרמטרי הבסיס ומתחשב בהשפעה על מספר החודשים והתוצאות.</em></p>`;
+                html += `<p><em>תרחישים עם תשואה גבוהה יציגו יותר חודשים, ותרחישים עם תשואה נמוכה יציגו פחות חודשים.</em></p>`;
                 html += `</div>`;
             }
             html += '<table class="results-table"><thead><tr>';
