@@ -1120,7 +1120,7 @@ createCapitalCompositionChart(results) {
 💰 השקעה התחלתית: ${window.annuityCalculator.formatNumber(summary.initialAmount)} ₪
 📊 משיכה חודשית: ${window.annuityCalculator.formatNumber(summary.monthlyWithdrawal)} ₪
 ⏳ תקופת המשיכה: ${summary.actualMonths} חודשים
-💸 סה"כ נטו לקבלה: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
+💸 סה"כ נטו : ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
 🏦 יתרה סופית: ${window.annuityCalculator.formatNumber(summary.finalBalance)} ₪
 
 חושב על אנונה? בוא נתכנן יחד!
@@ -1158,7 +1158,7 @@ createCapitalCompositionChart(results) {
 💰 השקעה התחלתית: ${window.annuityCalculator.formatNumber(summary.initialAmount)} ₪
 📊 משיכה חודשית: ${window.annuityCalculator.formatNumber(summary.monthlyWithdrawal)} ₪
 ⏳ תקופת המשיכה: ${summary.actualMonths} חודשים (${(summary.actualMonths/12).toFixed(1)} שנים)
-💸 סה"כ נטו לקבלה: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
+💸 סה"כ נטו: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
 🏦 יתרה סופית: ${window.annuityCalculator.formatNumber(summary.finalBalance)} ₪
 
 החישוב בוצע באמצעות המחשבון המקצועי של רועי רומנו - מתכנן פיננסי (רישיון: 117164)
@@ -1377,8 +1377,7 @@ createCapitalCompositionChart(results) {
             if (results.isIndependentSimulation) {
                 html += `<div class="simulation-info">`;
                 html += `<p><strong>🎯 סוג הניתוח:</strong> סימולציה עצמאית לכל תרחיש</p>`;
-                html += `<p><em>כל תרחיש מדמה שינוי באמת בפרמטרי הבסיס ומתחשב בהשפעה על מספר החודשים והתוצאות.</em></p>`;
-                html += `<p><em>תרחישים עם תשואה גבוהה יציגו יותר חודשים, ותרחישים עם תשואה נמוכה יציגו פחות חודשים.</em></p>`;
+                html += `<p><em>כל תרחיש מדמה שינוי בפרמטרי הבסיס ומתחשב בהשפעה על מספר החודשים והתוצאות.</em></p>`;
                 html += `</div>`;
             }
             html += '<table class="results-table"><thead><tr>';
