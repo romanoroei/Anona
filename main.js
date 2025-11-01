@@ -531,19 +531,19 @@ class AnnuityApp {
         // בדיקת יחס משיכה למאזן
         const withdrawalRate = (results.parameters.withdrawalAmount * 12) / results.summary.initialAmount * 100;
         if (withdrawalRate > 4) {
-            warnings.push(`🔴 <strong>שיעור משיכה גבוה:</strong> ${withdrawalRate.toFixed(1)}% שנתי עלול לזקוק את הקרן מהר מדי`);
-            recommendations.push(`📉 <strong>הפחת משיכה:</strong> שקול להפחית את המשיכה החודשית ל-${window.annuityCalculator.formatNumber(Math.round(results.summary.initialAmount * 0.04 / 12))} ₪`);
+            warnings.push(`🔴 <strong>שיעור הכנסה גבוה:</strong> ${withdrawalRate.toFixed(1)}% שנתי עלול לשחוק את הקרן מהר מדי`);
+            recommendations.push(`📉 <strong>הפחת הכנסה:</strong> שקול להפחית את ההכנסה החודשית ל-${window.annuityCalculator.formatNumber(Math.round(results.summary.initialAmount * 0.04 / 12))} ₪`);
         } else if (withdrawalRate < 2) {
-            recommendations.push(`📈 <strong>פוטנציאל למשיכה גבוהה יותר:</strong> ניתן להגדיל את המשיכה ל-${window.annuityCalculator.formatNumber(Math.round(results.summary.initialAmount * 0.035 / 12))} ₪ בחודש`);
+            recommendations.push(`📈 <strong>פוטנציאל להכנסה גבוהה יותר:</strong> ניתן להגדיל את ההכנסה ל-${window.annuityCalculator.formatNumber(Math.round(results.summary.initialAmount * 0.035 / 12))} ₪ בחודש`);
         }
 
-        // בדיקת תקופת המשיכה
+        // בדיקת תקופת ההכנסה
         const years = results.summary.actualMonths / 12;
         if (years < 10) {
             warnings.push(`⏰ <strong>תקופה קצרה:</strong> הכספים יסתיימו תוך ${years.toFixed(1)} שנים`);
-            recommendations.push(`🕐 <strong>האריך תקופה:</strong> הפחת את המשיכה כדי להאריך את התקופה ל-15-20 שנים`);
+            recommendations.push(`🕐 <strong>האריך תקופה:</strong> הפחת את ההכנסה כדי להאריך את התקופה ל-15-20 שנים`);
         } else if (years > 30) {
-            recommendations.push(`🎯 <strong>תקופה ארוכה:</strong> ניתן להגדיל את המשיכה ולעדיין להחזיק ${Math.round(years * 0.7)} שנים`);
+            recommendations.push(`🎯 <strong>תקופה ארוכה:</strong> ניתן להגדיל את ההכנסה ועדיין להחזיק ${Math.round(years * 0.7)} שנים`);
         }
 
         // בדיקת יעילות מיסוי
@@ -708,8 +708,8 @@ createCapitalCompositionChart(results) {
             
             inflationImpact.innerHTML = `
                 <strong>השפעת האינפלציה:</strong><br>
-                משיכה בחודש הראשון: ${window.annuityCalculator.formatNumber(realAmountFirstMonth)} ₪<br>
-                ערך משיכה בחודש האחרון: ~${window.annuityCalculator.formatNumber(realAmountLastMonth)} ₪<br>
+                הכנסה בחודש הראשון: ${window.annuityCalculator.formatNumber(realAmountFirstMonth)} ₪<br>
+                ערך הכנסה בחודש האחרון: ~${window.annuityCalculator.formatNumber(realAmountLastMonth)} ₪<br>
                 <span class="text-warning">אובדן כוח קנייה: ${purchasingPowerLoss.toFixed(1)}%</span>
             `;
         } else {
@@ -819,7 +819,7 @@ createCapitalCompositionChart(results) {
         const withdrawalMethodText = results.summary.withdrawalMethod === 'gross' ? 'נטו' : 'ברוטו';
         const withdrawalCardTitle = document.querySelector('#summaryWithdrawal').closest('.summary-card').querySelector('h3');
         if (withdrawalCardTitle) {
-            withdrawalCardTitle.textContent = `משיכה חודשית ממוצעת ${withdrawalMethodText}`;
+            withdrawalCardTitle.textContent = `הכנסה חודשית ממוצעת ${withdrawalMethodText}`;
         }
         
         const elements = {
@@ -1030,11 +1030,11 @@ createCapitalCompositionChart(results) {
             </div>
         `;
         
-        // סכום משיכה
+        // סכום הכנסה
         const withdrawalTypeText = params.withdrawalMethod === 'gross' ? 'ברוטו (לפני מס)' : 'נטו (אחרי מס)';
         html += `
             <div class="assumption-item">
-                <span class="assumption-label">סכום משיכה חודשי:</span>
+                <span class="assumption-label">סכום הכנסה חודשי:</span>
                 <span class="assumption-value">${window.annuityCalculator.formatNumber(params.withdrawalAmount)} ₪ ${withdrawalTypeText}</span>
             </div>
         `;
@@ -1073,7 +1073,7 @@ createCapitalCompositionChart(results) {
                 : 'מקסימום חודשים אפשריים';
             html += `
                 <div class="assumption-item">
-                    <span class="assumption-label">מספר חודשי משיכה:</span>
+                    <span class="assumption-label">מספר חודשי הכנסה:</span>
                     <span class="assumption-value">${monthsVal}</span>
                 </div>
             `;
@@ -1160,12 +1160,12 @@ createCapitalCompositionChart(results) {
         const message = encodeURIComponent(`🎯 תוצאות מחשבון אנונה מקצועי:
         
 💰 השקעה התחלתית: ${window.annuityCalculator.formatNumber(summary.initialAmount)} ₪
-📊 משיכה חודשית: ${window.annuityCalculator.formatNumber(summary.monthlyWithdrawal)} ₪
-⏳ תקופת המשיכה: ${summary.actualMonths} חודשים
-💸 סה"כ נטו לקבלה: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
+📊 הכנסה חודשית: ${window.annuityCalculator.formatNumber(summary.monthlyWithdrawal)} ₪
+⏳ תקופת הכנסה: ${summary.actualMonths} חודשים
+💸 סה"כ נטו לקבל: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
 🏦 יתרה סופית: ${window.annuityCalculator.formatNumber(summary.finalBalance)} ₪
 
-חושב על אנונה? בוא נתכנן יחד!
+חושב על הכנסה פאסיבית? בוא נתכנן יחד!
 רועי רומנו - מתכנן פיננסי`);
         
         window.open(`https://wa.me/?text=${message}`, '_blank');
@@ -1173,14 +1173,14 @@ createCapitalCompositionChart(results) {
 
     shareFacebook() {
         const url = encodeURIComponent(window.location.href);
-        const quote = encodeURIComponent('בדיוק סיימתי לחשב אנונה באמצעות המחשבון המקצועי של רועי רומנו. תוצאות מעניינות! 💰📊');
+        const quote = encodeURIComponent('בדיוק סיימתי ליצור לעצמי הכנסה פאסיבית באמצעות המחשבון המקצועי של רועי רומנו. תוצאות מעניינות! 💰📊');
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank');
     }
 
     shareLinkedIn() {
         const url = encodeURIComponent(window.location.href);
-        const title = encodeURIComponent('מחשבון אנונה מקצועי - תכנון פיננסי חכם');
-        const summary = encodeURIComponent('כלי מקצועי לחישוב משיכות אנונה עם אפשרויות מס מתקדמות ותובנות כלכליות');
+        const title = encodeURIComponent('מחשבון הכנסה פאסיבית מקצועי - תכנון פיננסי חכם');
+        const summary = encodeURIComponent('כלי מקצועי לחישוב הכנסה פאסיבית עם אפשרויות מס מתקדמות ותובנות כלכליות');
         window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`, '_blank');
     }
 
@@ -1191,16 +1191,16 @@ createCapitalCompositionChart(results) {
         }
         
         const summary = this.currentResults.summary;
-        const subject = encodeURIComponent('תוצאות מחשבון אנונה מקצועי');
+        const subject = encodeURIComponent('תוצאות מחשבון הכנסה פאסיבית מקצועי');
         const body = encodeURIComponent(`שלום,
 
-רציתי לשתף אתכם את התוצאות מחישוב האנונה שביצעתי:
+רציתי לשתף אתכם בתוצאות חישוב הכנסה פאסיבית שביצעתי:
 
 🎯 תוצאות החישוב:
 💰 השקעה התחלתית: ${window.annuityCalculator.formatNumber(summary.initialAmount)} ₪
-📊 משיכה חודשית: ${window.annuityCalculator.formatNumber(summary.monthlyWithdrawal)} ₪
-⏳ תקופת המשיכה: ${summary.actualMonths} חודשים (${(summary.actualMonths/12).toFixed(1)} שנים)
-💸 סה"כ נטו לקבלה: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
+📊 הכנסה חודשית: ${window.annuityCalculator.formatNumber(summary.monthlyWithdrawal)} ₪
+⏳ תקופת הכנסה: ${summary.actualMonths} חודשים (${(summary.actualMonths/12).toFixed(1)} שנים)
+💸 סה"כ נטו לקבל: ${window.annuityCalculator.formatNumber(summary.totalNet)} ₪
 🏦 יתרה סופית: ${window.annuityCalculator.formatNumber(summary.finalBalance)} ₪
 
 החישוב בוצע באמצעות המחשבון המקצועי של רועי רומנו - מתכנן פיננסי (רישיון: 117164)
@@ -1245,12 +1245,12 @@ createCapitalCompositionChart(results) {
         }
 
         if (!window.jspdf) {
-            this.showError('ספריית PDF לא נטענה. אנא רענן את הדף ונסה שוב.');
+            this.showError('ספריית PDF לא נטען. אנא רענן את הדף ונסה שוב.');
             return;
         }
 
         if (!window.html2canvas) {
-            this.showError('ספריית HTML2Canvas לא נטענה. אנא רענן את הדף ונסה שוב.');
+            this.showError('ספריית HTML2Canvas לא נטען. אנא רענן את הדף ונסה שוב.');
             return;
         }
 
@@ -1279,7 +1279,7 @@ createCapitalCompositionChart(results) {
         }
     }
 
-    // הרצת כלי משיכה מקסימלית
+    // הרצת כלי הכנסה מקסימלית
     async runMaxWithdrawalTool() {
         if (this.isCalculating) return;
 
@@ -1290,10 +1290,10 @@ createCapitalCompositionChart(results) {
             const formData = this.getFormData();
             const results = await window.advancedTools.calculateMaxWithdrawal(formData);
             
-            this.showToolResults('חישוב משיכה מקסימלית', this.formatMaxWithdrawalResults(results));
+            this.showToolResults('חישוב הכנסה מקסימלית', this.formatMaxWithdrawalResults(results));
 
         } catch (error) {
-            this.showError('שגיאה בכלי משיכה מקסימלית: ' + error.message);
+            this.showError('שגיאה בכלי הכנסה מקסימלית: ' + error.message);
         } finally {
             this.isCalculating = false;
             this.showLoadingSpinner(false);
@@ -1377,9 +1377,9 @@ createCapitalCompositionChart(results) {
         let html = '<div class="tool-results">';
         
         if (results.results && results.results.length > 0) {
-            html += '<h3>משיכה מקסימלית לפי תקופות:</h3>';
+            html += '<h3>הכנסה מקסימלית לפי תקופות:</h3>';
             html += '<table class="results-table"><thead><tr>';
-            html += '<th>תקופה</th><th>משיכה מקסימלית</th><th>סה״כ נטו</th><th>מס כולל</th>';
+            html += '<th>תקופה</th><th>הכנסה מקסימלית</th><th>סה״כ נטו</th><th>מס כולל</th>';
             html += '</tr></thead><tbody>';
             
             results.results.forEach(r => {
@@ -1793,7 +1793,7 @@ createCapitalCompositionChart(results) {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'סכום משיכה חודשי (₪)',
+                    label: 'סכום הכנסה חודשי (₪)',
                     data: withdrawalData,
                     backgroundColor: 'rgba(217, 119, 6, 0.8)',
                     borderColor: '#D97706',
@@ -1806,7 +1806,7 @@ createCapitalCompositionChart(results) {
                 plugins: {
                     title: {
                         display: true,
-                        text: 'סכומי משיכה חודשיים',
+                        text: 'סכומי הכנסה חודשיים',
                         font: { size: 16, weight: 'bold' },
                         color: '#1F2937'
                     },
@@ -1831,7 +1831,7 @@ createCapitalCompositionChart(results) {
                         display: true,
                         title: {
                             display: true,
-                            text: 'סכום משיכה (₪)',
+                            text: 'סכום הכנסה (₪)',
                             font: { weight: 'bold' }
                         },
                         ticks: {
