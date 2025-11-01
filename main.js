@@ -1157,7 +1157,7 @@ createCapitalCompositionChart(results) {
         }
         
         const summary = this.currentResults.summary;
-        const message = encodeURIComponent(`🎯 תוצאות מחשבון אנונה מקצועי:
+        const message = encodeURIComponent(`🎯 תוצאות מחשבון הכנסה פאסיבית מקצועי:
         
 💰 השקעה התחלתית: ${window.annuityCalculator.formatNumber(summary.initialAmount)} ₪
 📊 הכנסה חודשית: ${window.annuityCalculator.formatNumber(summary.monthlyWithdrawal)} ₪
