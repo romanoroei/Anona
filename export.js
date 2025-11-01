@@ -151,8 +151,8 @@ class DataExporter {
         html += '<p><strong>השקעה התחלתית:</strong> ' + formatNum(results.summary?.initialAmount) + ' ₪</p>';
         html += '<p><strong>תשואה שנתית:</strong> ' + (parseFloat(results.parameters?.annualReturn || 0) * 100).toFixed(2) + '%</p>';
         html += '<p><strong>דמי ניהול שנתיים:</strong> ' + (parseFloat(results.parameters?.annualFee || 0) * 100).toFixed(2) + '%</p>';
-        html += '<p><strong>משיכה חודשית:</strong> ' + formatNum(results.parameters?.withdrawalAmount) + ' ₪</p>';
-        html += '<p><strong>שיטת משיכה:</strong> ' + (results.parameters?.withdrawalMethod === 'gross' ? 'ברוטו (לפני מס)' : 'נטו (אחרי מס)') + '</p>';
+        html += '<p><strong>הכנסה חודשית:</strong> ' + formatNum(results.parameters?.withdrawalAmount) + ' ₪</p>';
+        html += '<p><strong>שיטת הכנסה:</strong> ' + (results.parameters?.withdrawalMethod === 'gross' ? 'ברוטו (לפני מס)' : 'נטו (אחרי מס)') + '</p>';
         html += '<p><strong>סוג מס:</strong> ' + (results.parameters?.taxType === 'real' ? 'מס ריאלי (25%)' : 'מס נומינלי (15%)') + '</p>';
         html += '<p><strong>אינפלציה שנתית:</strong> ' + (parseFloat(results.parameters?.annualInflation || 0) * 100).toFixed(2) + '%</p>';
         html += '<p><strong>סך חודשים:</strong> ' + results.summary?.actualMonths + '</p>';
@@ -167,20 +167,20 @@ class DataExporter {
         html += '<p><strong>סה"כ מס ששולם:</strong> ' + formatNum(results.summary?.totalTax) + ' ₪</p>';
         html += '<p><strong>סה"כ התקבל נטו:</strong> ' + formatNum(results.summary?.totalNet) + ' ₪</p>';
         html += '<p><strong>יתרה סופית:</strong> ' + formatNum(results.summary?.finalBalance) + ' ₪</p>';
-        html += '<p><strong>יעילות המשיכה:</strong> ' + ((results.summary?.totalNet / results.summary?.initialAmount) * 100).toFixed(2) + '%</p>';
+        html += '<p><strong>יעילות ההכנסה:</strong> ' + ((results.summary?.totalNet / results.summary?.initialAmount) * 100).toFixed(2) + '%</p>';
         html += '<p><strong>שיעור מס ממוצע:</strong> ' + ((results.summary?.totalTax / results.summary?.totalWithdrawn) * 100).toFixed(2) + '%</p>';
         html += '</div>';
         html += '</div>';
 
-        // ניתוח משיכה מקסימלית
+        // ניתוח הכנסה מקסימלית
         const maxMonthlyApprox = Math.round(results.summary?.initialAmount * 0.004);
         html += '<div style="margin-bottom: 15px;">';
-        html += '<h2 style="font-size: 14px; font-weight: bold; color: #34495e; border-bottom: 1px solid #f39c12; padding-bottom: 3px;">ניתוח משיכה מקסימלית</h2>';
+        html += '<h2 style="font-size: 14px; font-weight: bold; color: #34495e; border-bottom: 1px solid #f39c12; padding-bottom: 3px;">ניתוח הכנסה מקסימלית</h2>';
         html += '<div style="margin: 8px 0; line-height: 1.4; font-size: 11px;">';
-        html += '<p><strong>משיכה חודשית נוכחית:</strong> ' + formatNum(results.parameters?.withdrawalAmount) + ' ₪</p>';
-        html += '<p><strong>משיכה מקסימלית מוערכת:</strong> ~' + formatNum(maxMonthlyApprox) + ' ₪/חודש</p>';
+        html += '<p><strong>הכנסה חודשית נוכחית:</strong> ' + formatNum(results.parameters?.withdrawalAmount) + ' ₪</p>';
+        html += '<p><strong>הכנסה מקסימלית מוערכת:</strong> ~' + formatNum(maxMonthlyApprox) + ' ₪/חודש</p>';
         html += '<p><strong>יחס נוכחי למקסימום:</strong> ' + ((parseFloat(results.parameters?.withdrawalAmount) / maxMonthlyApprox) * 100).toFixed(1) + '%</p>';
-        html += '<p><strong>תקופת המשיכה:</strong> ' + results.summary?.actualMonths + ' חודשים (' + (results.summary?.actualMonths / 12).toFixed(1) + ' שנים)</p>';
+        html += '<p><strong>תקופת ההכנסה:</strong> ' + results.summary?.actualMonths + ' חודשים (' + (results.summary?.actualMonths / 12).toFixed(1) + ' שנים)</p>';
         html += '</div>';
         html += '</div>';
 
@@ -197,9 +197,9 @@ class DataExporter {
             html += '<th style="border: 1px solid #ddd; padding: 4px; text-align: center;">יתרה התחלתית</th>';
             html += '<th style="border: 1px solid #ddd; padding: 4px; text-align: center;">תשואה</th>';
             html += '<th style="border: 1px solid #ddd; padding: 4px; text-align: center;">דמי ניהול</th>';
-            html += '<th style="border: 1px solid #ddd; padding: 4px; text-align: center;">משיכה ברוטו</th>';
+            html += '<th style="border: 1px solid #ddd; padding: 4px; text-align: center;">הכנסה ברוטו</th>';
             html += '<th style="border: 1px solid #ddd; padding: 4px; text-align: center;">מס</th>';
-            html += '<th style="border: 1px solid #ddd; padding: 4px; text-align: center;">משיכה נטו</th>';
+            html += '<th style="border: 1px solid #ddd; padding: 4px; text-align: center;">הכנסה נטו</th>';
             html += '<th style="border: 1px solid #ddd; padding: 4px; text-align: center;">יתרה סופית</th>';
             html += '</tr>';
             html += '</thead>';
@@ -316,18 +316,18 @@ class DataExporter {
             { 'פרמטר': 'דמי ניהול שנתיים', 'ערך': `${(safeNum(results.parameters.annualFee) * 100).toFixed(2)}%` },
             { 'פרמטר': 'סוג מס', 'ערך': taxType },
             { 'פרמטר': 'אינפלציה שנתית', 'ערך': `${(safeNum(results.parameters.annualInflation) * 100).toFixed(2)}%` },
-            { 'פרמטר': 'שיטת משיכה', 'ערך': withdrawalMethod },
+            { 'פרמטר': 'שיטת הכנסה', 'ערך': withdrawalMethod },
             { 'פרמטר': '', 'ערך': '' },
             { 'פרמטר': 'תוצאות החישוב:', 'ערך': '' },
-            { 'פרמטר': 'משיכה חודשית ממוצעת', 'ערך': `${formatNumber(results.parameters.withdrawalAmount)} ש"ח` },
-            { 'פרמטר': 'מספר חודשי משיכה בפועל', 'ערך': safeNum(results.summary.actualMonths) },
+            { 'פרמטר': 'הכנסה חודשית ממוצעת', 'ערך': `${formatNumber(results.parameters.withdrawalAmount)} ש"ח` },
+            { 'פרמטר': 'מספר חודשי הכנסה בפועל', 'ערך': safeNum(results.summary.actualMonths) },
             { 'פרמטר': 'סה"כ נמשך ברוטו', 'ערך': `${formatNumber(results.summary.totalWithdrawn)} ש"ח` },
             { 'פרמטר': 'סה"כ מס ששולם', 'ערך': `${formatNumber(results.summary.totalTax)} ש"ח` },
             { 'פרמטר': 'סה"כ נטו התקבל', 'ערך': `${formatNumber(results.summary.totalNet)} ש"ח` },
             { 'פרמטר': 'יתרה סופית', 'ערך': `${formatNumber(results.summary.finalBalance)} ש"ח` },
             { 'פרמטר': '', 'ערך': '' },
             { 'פרמטר': 'מדדי ביצועים:', 'ערך': '' },
-            { 'פרמטר': 'יעילות משיכה', 'ערך': `${((safeNum(results.summary.totalNet) / safeNum(results.summary.initialAmount)) * 100).toFixed(1)}%` },
+            { 'פרמטר': 'יעילות הכנסה', 'ערך': `${((safeNum(results.summary.totalNet) / safeNum(results.summary.initialAmount)) * 100).toFixed(1)}%` },
             { 'פרמטר': 'שיעור מס ממוצע', 'ערך': `${((safeNum(results.summary.totalTax) / safeNum(results.summary.totalWithdrawn)) * 100).toFixed(2)}%` }
         ];
     }
@@ -348,12 +348,12 @@ class DataExporter {
                 'יתרה התחלתית': Math.round(safeNum(row.startBalance)),
                 'תשואה חודשית': Math.round(safeNum(row.returnAmount)),
                 'דמי ניהול': Math.round(safeNum(row.managementFee)),
-                'יתרה לפני משיכה': Math.round(safeNum(row.balanceAfterFee)),
+                'יתרה לפני הכנסה': Math.round(safeNum(row.balanceAfterFee)),
                 'רווח חייב במס': Math.round(safeNum(row.taxableGain)),
                 'יחס רווח': (safeNum(row.gainRatio) * 100).toFixed(2) + '%',
-                'משיכה ברוטו': Math.round(safeNum(row.actualWithdrawal)),
+                'הכנסה ברוטו': Math.round(safeNum(row.actualWithdrawal)),
                 'מס': Math.round(safeNum(row.tax)),
-                'משיכה נטו': Math.round(safeNum(row.netWithdrawal)),
+                'הכנסה נטו': Math.round(safeNum(row.netWithdrawal)),
                 'יתרה סופית': Math.round(safeNum(row.endBalance)),
                 'בסיס עלות': Math.round(safeNum(row.costBasis))
             };
