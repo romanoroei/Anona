@@ -47,9 +47,9 @@
                 </div>
 
                 <div class="input-group">
-                    <label for="withdrawalAmount">סכום משיכה חודשי מבוקש (₪)</label>
+                    <label for="withdrawalAmount">סכום הכנסה חודשי מבוקש (₪)</label>
                     <input type="text" id="withdrawalAmount" value="6,000" class="number-input">
-                    <span class="range-info">הסכום הרצוי למשיכה חודשית מהתכנית </span>
+                    <span class="range-info">הסכום הרצוי שיכנס לחשבונך מדי חודש מתכנית ההשקעה </span>
                 </div>
             </div>
 
@@ -86,16 +86,16 @@
                     </div>
 
                     <div class="input-group">
-                        <label for="withdrawalMethod">שיטת משיכה מועדפת</label>
+                        <label for="withdrawalMethod">שיטת הכנסה מועדפת</label>
                         <select id="withdrawalMethod">
                             <option value="gross" selected>ברוטו (לפני מס)</option>
                             <option value="net">נטו (אחרי מס)</option>
                         </select>
-                        <span class="range-info">האם הסכום שהזנת הוא לפני או אחרי מס</span>
+                        <span class="range-info">האם סכום ההכנסה הוא לפני או אחרי מס</span>
                     </div>
 
                     <div class="input-group">
-                        <label for="monthsToDisplay">מספר חודשי משיכה</label>
+                        <label for="monthsToDisplay">מספר חודשי הכנסה</label>
                         <input type="text" id="monthsToDisplay" value="מקסימום חודשים" class="number-input">
                         <span class="range-info">הזן מספר חודשים או השאר "מקסימום חודשים" לכל התקופה</span>
                     </div>
@@ -127,11 +127,11 @@
                     <div class="card-value" id="summaryInitial">-</div>
                 </div>
                 <div class="summary-card">
-                    <h3>משיכה חודשית ממוצעת</h3>
+                    <h3>הכנסה חודשית ממוצעת</h3>
                     <div class="card-value" id="summaryWithdrawal">-</div>
                 </div>
                 <div class="summary-card">
-                    <h3>מספר חודשי משיכה</h3>
+                    <h3>מספר חודשי הכנסה</h3>
                     <div class="card-value" id="summaryActualMonths">-</div>
                 </div>
                 <div class="summary-card">
@@ -207,9 +207,9 @@
                             <th>רווח חודשי</th>
                             <th>דמי ניהול</th>
                             <th>יתרה לפני משיכה</th>
-                            <th>משיכה ברוטו</th>
+                            <th>הכנסה ברוטו</th>
                             <th>מס</th>
-                            <th>משיכה נטו</th>
+                            <th>הכנסה נטו</th>
                             <th>יתרה סופית</th>
                         </tr>
                     </thead>
@@ -258,7 +258,7 @@
 
             <!-- Contact Section - Create Professional Annuity -->
             <section class="contact-section">
-                <h2>רוצה הכנסה קבועה ?</h2>
+                <h2>רוצה לייצר לעצמך הכנסה פאסיבית?</h2>
                 <p class="planner-intro">רועי רומנו - מתכנן פיננסי עם ניסיון של מעל 15 שנה</p>
                 <p>אני כאן לעזור לך לתכנן את העתיד הפיננסי שלך בצורה מקצועית ומותאמת אישית</p>
                 <div class="contact-buttons">
@@ -347,16 +347,16 @@
             <div id="clientAccessGate" class="client-access-gate">
                 <div class="access-message">
                     <h3>🔒 חלק זה ללקוחות בלבד</h3>
-                    <p>מאפשר גישה לניתוח רגישות, השוואת שיטות מס, חישובי משיכה אופטימליים ואופטימיזציה חכמה</p>
+                    <p>מאפשר גישה לניתוח רגישות, השוואת שיטות מס, חישובי הכנסה אופטימליים ואופטימיזציה חכמה</p>
                     <button type="button" id="unlockToolsBtn" class="unlock-btn">הכנס סיסמה</button>
                 </div>
             </div>
             
             <div id="toolsGrid" class="tools-grid" style="display: none;">
                 <div class="tool-card">
-                    <h3>💰 חישוב משיכה מקסימלית</h3>
-                    <p>מוצא את המשיכה האופטימלית לתקופות שונות</p>
-                    <button type="button" id="maxWithdrawalTool" class="tool-btn">חשב משיכה מקסימלית</button>
+                    <h3>💰 חישוב הכנסה מקסימלית</h3>
+                    <p>מוצא את ההכנסה האופטימלית לתקופות שונות</p>
+                    <button type="button" id="maxWithdrawalTool" class="tool-btn">חשב הכנסה מקסימלית</button>
                 </div>
 
                 <div class="tool-card">
